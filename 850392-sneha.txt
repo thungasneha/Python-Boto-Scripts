@@ -1,0 +1,25 @@
+import psycopg2
+host = "scriptserver"
+dbname = "scriptDB"
+user = "Sneha"
+password = "#########"
+sslmode = "require"
+conn_string = "host={0} user={1} dbname={2} password={3} sslmode={4}".format(host, user, dbname, password, sslmode)
+conn = psycopg2.connect(conn_string) 
+print("Connection established")
+cursor = conn.cursor()
+table=input("Enter Table Name: ")
+cursor.execute("DROP TABLE IF EXISTS "+table+";")
+print("Finished dropping table (if existed)")
+cursor.execute("CREATE TABLE "+table+" (id serial PRIMARY KEY, firstname VARCHAR(50),lastname VARCHAR(50), age INTEGER);")
+print("Finished creating table")
+cursor.execute("INSERT INTO "+table+" (id,firstname,lastname,age) VALUES (%s, %s,%s,%s);", (1243,'sneha','thunga',20))
+cursor.execute("SELECT * FROM "+table+";")
+rows = cursor.fetchall()
+for row in rows:
+    print("Data row = (%s, %s, %s,%s)" %(str(row[0]), str(row[1]), str(row[2]),str(row[3])))
+cursor.execute("UPDATE "+table+" SET age = %s WHERE id = %s;", (int(input("Enter Age")), input("Enter  Id")))
+cursor.execute("DELETE FROM "+table+" WHERE id = %s;", (int(input("Enter id to delete data")),))
+conn.commit()
+cursor.close()
+conn.close()
